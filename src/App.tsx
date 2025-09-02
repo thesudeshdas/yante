@@ -1,3 +1,11 @@
+import { Button } from "./components/ui/button";
+
 export default function App() {
-  return <h1>yante</h1>;
+  return (
+    <main>
+      <h1>yante</h1>
+
+      <Button>Click me</Button>
+    </main>
+  );
 }
