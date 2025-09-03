@@ -1,11 +1,10 @@
 import { Button } from "./components/ui/button";
+import NewTab from "./screens/new-tab/new-tab";
 
 export default function App() {
   return (
     <main>
-      <h1>yante</h1>
-
-      <Button>Click me</Button>
+      <NewTab />
     </main>
   );
 }

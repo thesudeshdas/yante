@@ -1,0 +1,78 @@
+---
+alwaysApply: true
+description: Coding standards and conventions for the project
+---
+
+# Coding Standards
+
+## Type and Interface Naming
+
+- Use "I" prefix for all types and interfaces
+- Use "E" prefix for all enums
+
+Examples:
+
+```typescript
+interface IUserData {
+  id: string;
+  name: string;
+}
+
+type IApiResponse = {
+  data: any;
+  status: number;
+};
+
+enum EStatus {
+  LOADING = "loading",
+  SUCCESS = "success",
+  ERROR = "error",
+}
+```
+
+## Function Conventions
+
+- **Components** (anything that renders JSX): Use normal function declarations
+- **Utils and helper functions**: Use arrow functions
+
+Examples:
+
+```typescript
+// Component - normal function
+function UserProfile({ user }: IUserProfileProps) {
+  return <div>{user.name}</div>;
+}
+
+// Utility - arrow function
+const formatTime = (date: Date): string => {
+  return date.toISOString();
+};
+
+const calculateProgress = (current: number, total: number): number => {
+  return (current / total) * 100;
+};
+```
+
+## Color Usage
+
+- **Only use HSL values** for colors
+- **No hardcoded color values** (hex, rgb, named colors)
+- Use CSS custom properties or Tailwind HSL utilities
+
+Examples:
+
+```typescript
+// ✅ Correct
+className="text-hsl(220, 100%, 50%)"
+style={{ color: 'hsl(0, 0%, 20%)' }}
+
+// ❌ Incorrect
+className="text-blue-500"
+style={{ color: '#3b82f6' }}
+```
+
+## File Structure
+
+- Components should be in `src/components/`
+- Utils should be in `src/lib/utils/`
+- Types should be in `src/types/` or co-located with components
