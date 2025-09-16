@@ -1,3 +1,4 @@
+import Dnd from "@/components/dnd/dnd";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -8,13 +9,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { FEATURES_LIST } from "@/data/features-list";
+import { IFeature } from "@/state/contexts/app-context/app-types";
 import useApp from "@/state/contexts/app-context/useApp";
 import { SettingsIcon } from "lucide-react";
 
 export default function Settings() {
   const { features, setFeatures } = useApp();
 
-  const handleCheckFeature = (feature: string, checked: boolean) => {
+  const handleCheckFeature = (feature: IFeature, checked: boolean) => {
     if (checked) {
       setFeatures((prevFeatures) => [...prevFeatures, feature]);
     } else {
@@ -23,15 +25,9 @@ export default function Settings() {
   };
 
   return (
-    <Sheet>
+    <Sheet open>
       <SheetTrigger>
-        <Button
-          variant="link"
-          size="icon"
-          className="size-8 cursor-pointer hover:bg-foreground/10"
-        >
-          <SettingsIcon />
-        </Button>
+        <SettingsIcon className="size-8 cursor-pointer hover:bg-foreground/10" />
       </SheetTrigger>
 
       <SheetContent className="w-[1000px] sm:max-w-full">
@@ -47,9 +43,9 @@ export default function Settings() {
               <li key={feature.id} className="flex items-center gap-2">
                 <Checkbox
                   id={feature.id}
-                  checked={features.includes(feature.id)}
+                  checked={features.includes(feature)}
                   onCheckedChange={(checked) =>
-                    handleCheckFeature(feature.id, checked as boolean)
+                    handleCheckFeature(feature, checked as boolean)
                   }
                 />
                 <label htmlFor={feature.id} className="text-sm">
@@ -58,6 +54,8 @@ export default function Settings() {
               </li>
             ))}
           </ul>
+
+          <Dnd />
         </div>
       </SheetContent>
     </Sheet>

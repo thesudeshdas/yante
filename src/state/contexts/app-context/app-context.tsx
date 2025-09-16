@@ -1,8 +1,9 @@
 import React, { createContext, useState } from "react";
-import { IAppContext } from "./app-types";
+import { IAppContext, IFeature } from "./app-types";
+import { FEATURES_LIST } from "@/data/features-list";
 
 export const initialFeatures: IAppContext = {
-  features: ["id_clock"],
+  features: FEATURES_LIST,
   setFeatures: () => {},
 };
 
@@ -13,7 +14,9 @@ export default function AppProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [features, setFeatures] = useState<string[]>(initialFeatures.features);
+  const [features, setFeatures] = useState<IFeature[]>(
+    initialFeatures.features
+  );
 
   return (
     <AppContext.Provider value={{ features, setFeatures }}>
