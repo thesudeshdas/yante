@@ -22,7 +22,7 @@ export default function appReducer(
         features: state.features.filter((f) => f !== featureToRemove),
       };
     case "SET_DRAGGED_ITEM":
-      return { ...state, draggedItem: action.id };
+      return { ...state, draggedItemId: action.itemId };
     default:
       return state;
   }

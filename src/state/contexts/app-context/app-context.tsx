@@ -5,7 +5,11 @@ import appReducer from "./app-reducer";
 
 export const initialFeatures: IAppState = {
   features: FEATURES_LIST,
-  draggedItem: null,
+  draggedItemId: null,
+  canvas: {
+    width: 600,
+    height: 600,
+  },
 };
 
 export const AppContext = createContext(

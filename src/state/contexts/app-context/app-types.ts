@@ -1,6 +1,10 @@
 export interface IAppState {
   features: IFeature[];
-  draggedItem: string | null;
+  draggedItemId: string | null;
+  canvas: {
+    width: number;
+    height: number;
+  };
 }
 
 export interface IFeature {
@@ -14,4 +18,4 @@ export interface IFeature {
 export type IAppAction =
   | { type: "ADD_FEATURE"; featureId: string }
   | { type: "REMOVE_FEATURE"; featureID: string }
-  | { type: "SET_DRAGGED_ITEM"; id: string };
+  | { type: "SET_DRAGGED_ITEM"; itemId: string };
