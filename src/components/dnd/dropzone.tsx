@@ -1,19 +1,18 @@
-import { FEATURES_LIST } from "@/data/features-list";
 import { getNearestCell } from "@/lib/utils/coordinates";
 import { pixellate, setCSS } from "@/lib/utils/css";
 import useApp from "@/state/contexts/app-context/useApp";
 import { useState } from "react";
 
 export default function Dropzone() {
-  const { appState } = useApp();
+  const { appState, appDispatch } = useApp();
 
   const { width, height } = appState.canvas;
 
   const canvasWidth = pixellate(width);
   const canvasHeight = pixellate(height);
 
-  const [xToBeSet, setXToBeSet] = useState<string | null>(null);
-  const [yToBeSet, setYToBeSet] = useState<string | null>(null);
+  const [xToBeSet, setXToBeSet] = useState<number | null>(null);
+  const [yToBeSet, setYToBeSet] = useState<number | null>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -26,7 +25,7 @@ export default function Dropzone() {
     if (!dropzoneEl) return;
 
     // get the dragged item
-    const draggedItem = FEATURES_LIST.find(
+    const draggedItem = appState.enabledFeatures.find(
       (f) => f.id === appState.draggedItemId
     );
     if (!draggedItem) return;
@@ -68,8 +67,8 @@ export default function Dropzone() {
       });
 
       // set the x and y to be set in the cloned dragged element
-      setXToBeSet(pixellate(x));
-      setYToBeSet(pixellate(y));
+      setXToBeSet(x);
+      setYToBeSet(y);
     }
   };
 
@@ -87,7 +86,7 @@ export default function Dropzone() {
     }
 
     // get the dragged item
-    const draggedItem = FEATURES_LIST.find(
+    const draggedItem = appState.enabledFeatures.find(
       (f) => f.id === appState.draggedItemId
     );
     if (!draggedItem) return;
@@ -97,19 +96,29 @@ export default function Dropzone() {
     const draggedElement = document.getElementById(data);
     if (!draggedElement) return;
 
-    // clone the dragged element & add the class names for styling
+    // clone the dragged element & add styling
     const clonedDraggedElement = draggedElement.cloneNode(true) as HTMLElement;
     clonedDraggedElement.classList.add("absolute");
 
     setCSS(clonedDraggedElement, {
       width: `calc((${canvasWidth}/12)*${draggedItem.minXCell})`,
       height: `calc((${canvasHeight}/12)*${draggedItem.minYCell})`,
-      left: xToBeSet ?? "0px",
-      top: yToBeSet ?? "0px",
+      left: pixellate(xToBeSet ?? 0),
+      top: pixellate(yToBeSet ?? 0),
     });
 
     // append the cloned element to the dropzone
     dropzoneEl.appendChild(clonedDraggedElement as HTMLElement);
+
+    // set the position of the dragged element
+
+    if (xToBeSet && yToBeSet) {
+      appDispatch({
+        type: "SET_POSITION",
+        itemId: draggedItem.id,
+        position: { x: xToBeSet, y: yToBeSet },
+      });
+    }
   };
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {

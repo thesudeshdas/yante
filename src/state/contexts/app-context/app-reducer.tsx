@@ -10,19 +10,34 @@ export default function appReducer(
       const featureToAdd = FEATURES_LIST.find((f) => f.id === action.featureId);
       if (!featureToAdd) return state;
 
-      return { ...state, features: [...state.features, featureToAdd] };
-    case "REMOVE_FEATURE":
-      const featureToRemove = FEATURES_LIST.find(
-        (f) => f.id === action.featureID
-      );
-      if (!featureToRemove) return state;
-
       return {
         ...state,
-        features: state.features.filter((f) => f !== featureToRemove),
+        enabledFeatures: [
+          ...state.enabledFeatures,
+          { ...featureToAdd, enabled: true, onCanvas: false },
+        ],
       };
+
+    case "REMOVE_FEATURE":
+      return {
+        ...state,
+        enabledFeatures: state.enabledFeatures.filter(
+          (f) => f.id !== action.featureID
+        ),
+      };
+
     case "SET_DRAGGED_ITEM":
       return { ...state, draggedItemId: action.itemId };
+
+    case "SET_POSITION":
+      return {
+        ...state,
+        enabledFeatures: state.enabledFeatures.map((f) =>
+          f.id === action.itemId
+            ? { ...f, position: action.position, onCanvas: true }
+            : f
+        ),
+      };
     default:
       return state;
   }

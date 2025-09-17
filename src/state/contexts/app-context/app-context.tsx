@@ -5,6 +5,7 @@ import appReducer from "./app-reducer";
 
 export const initialFeatures: IAppState = {
   features: FEATURES_LIST,
+  enabledFeatures: [],
   draggedItemId: null,
   canvas: {
     width: 600,

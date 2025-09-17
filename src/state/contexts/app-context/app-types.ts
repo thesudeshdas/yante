@@ -1,5 +1,6 @@
 export interface IAppState {
   features: IFeature[];
+  enabledFeatures: IEnabledFeature[];
   draggedItemId: string | null;
   canvas: {
     width: number;
@@ -15,7 +16,21 @@ export interface IFeature {
   minYCell: number;
 }
 
+export interface IEnabledFeature extends IFeature {
+  enabled: boolean;
+  onCanvas: boolean;
+  position?: {
+    x: number;
+    y: number;
+  };
+}
+
 export type IAppAction =
   | { type: "ADD_FEATURE"; featureId: string }
   | { type: "REMOVE_FEATURE"; featureID: string }
-  | { type: "SET_DRAGGED_ITEM"; itemId: string };
+  | { type: "SET_DRAGGED_ITEM"; itemId: string }
+  | {
+      type: "SET_POSITION";
+      itemId: string;
+      position: { x: number; y: number };
+    };

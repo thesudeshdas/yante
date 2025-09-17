@@ -7,7 +7,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { FEATURES_LIST } from "@/data/features-list";
 import { IFeature } from "@/state/contexts/app-context/app-types";
 import useApp from "@/state/contexts/app-context/useApp";
 import { SettingsIcon } from "lucide-react";
@@ -29,6 +28,8 @@ export default function Settings() {
     }
   };
 
+  console.log({ appState });
+
   return (
     <Sheet open>
       <SheetTrigger>
@@ -44,11 +45,13 @@ export default function Settings() {
           <h2 className="text-lg font-semibold">Choose features to enable</h2>
 
           <ul className="flex flex-col gap-2 mt-4">
-            {FEATURES_LIST.map((feature) => (
+            {appState.features.map((feature) => (
               <li key={feature.id} className="flex items-center gap-2">
                 <Checkbox
                   id={feature.id}
-                  checked={appState.features.includes(feature)}
+                  checked={appState.enabledFeatures.some(
+                    (f) => f.id === feature.id
+                  )}
                   onCheckedChange={(checked) =>
                     handleCheckFeature(feature, checked as boolean)
                   }
