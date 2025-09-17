@@ -1,6 +1,6 @@
 import { FEATURES_LIST } from "@/data/features-list";
 import { getNearestCell } from "@/lib/utils/coordinates";
-import { pixellate } from "@/lib/utils/css";
+import { pixellate, setCSS } from "@/lib/utils/css";
 import useApp from "@/state/contexts/app-context/useApp";
 import { useState } from "react";
 
@@ -40,15 +40,19 @@ export default function Dropzone() {
       newPreviewEl.classList.add("bg-red-500", "absolute");
 
       // Use inline styles instead of dynamic Tailwind classes
-      newPreviewEl.style.height = `calc((${canvasHeight}/12)*${draggedItem.minYCell})`;
-      newPreviewEl.style.width = `calc((${canvasWidth}/12)*${draggedItem.minXCell})`;
+      setCSS(newPreviewEl, {
+        height: `calc((${canvasHeight}/12)*${draggedItem.minYCell})`,
+        width: `calc((${canvasWidth}/12)*${draggedItem.minXCell})`,
+      });
 
       console.log({ canvasHeight, canvasWidth, draggedItem });
 
       const { x, y } = getNearestCell(dropzoneEl, e.clientX, e.clientY, 0, 0);
 
-      newPreviewEl.style.left = pixellate(x);
-      newPreviewEl.style.top = pixellate(y);
+      setCSS(newPreviewEl, {
+        left: pixellate(x),
+        top: pixellate(y),
+      });
 
       dropzoneEl.appendChild(newPreviewEl as HTMLElement);
     }
@@ -57,8 +61,13 @@ export default function Dropzone() {
     if (previewEl) {
       const { x, y } = getNearestCell(dropzoneEl, e.clientX, e.clientY, 0, 0);
 
-      previewEl.style.left = pixellate(x);
-      previewEl.style.top = pixellate(y);
+      // update the position of the preview element
+      setCSS(previewEl, {
+        left: pixellate(x),
+        top: pixellate(y),
+      });
+
+      // set the x and y to be set in the cloned dragged element
       setXToBeSet(pixellate(x));
       setYToBeSet(pixellate(y));
     }
@@ -91,10 +100,13 @@ export default function Dropzone() {
     // clone the dragged element & add the class names for styling
     const clonedDraggedElement = draggedElement.cloneNode(true) as HTMLElement;
     clonedDraggedElement.classList.add("absolute");
-    clonedDraggedElement.style.left = xToBeSet ?? "0px";
-    clonedDraggedElement.style.top = yToBeSet ?? "0px";
-    clonedDraggedElement.style.width = `calc((${canvasWidth}/12)*${draggedItem.minXCell})`;
-    clonedDraggedElement.style.height = `calc((${canvasHeight}/12)*${draggedItem.minYCell})`;
+
+    setCSS(clonedDraggedElement, {
+      width: `calc((${canvasWidth}/12)*${draggedItem.minXCell})`,
+      height: `calc((${canvasHeight}/12)*${draggedItem.minYCell})`,
+      left: xToBeSet ?? "0px",
+      top: yToBeSet ?? "0px",
+    });
 
     // append the cloned element to the dropzone
     dropzoneEl.appendChild(clonedDraggedElement as HTMLElement);
