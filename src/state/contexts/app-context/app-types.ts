@@ -1,8 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
-
-export interface IAppContext {
+export interface IAppState {
   features: IFeature[];
-  setFeatures: Dispatch<SetStateAction<IFeature[]>>;
+  draggedItem: string | null;
 }
 
 export interface IFeature {
@@ -12,3 +10,8 @@ export interface IFeature {
   minXCell: number;
   minYCell: number;
 }
+
+export type IAppAction =
+  | { type: "ADD_FEATURE"; featureId: string }
+  | { type: "REMOVE_FEATURE"; featureID: string }
+  | { type: "SET_DRAGGED_ITEM"; id: string };

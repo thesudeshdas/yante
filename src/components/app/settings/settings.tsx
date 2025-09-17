@@ -1,5 +1,4 @@
 import Dnd from "@/components/dnd/dnd";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Sheet,
@@ -14,13 +13,19 @@ import useApp from "@/state/contexts/app-context/useApp";
 import { SettingsIcon } from "lucide-react";
 
 export default function Settings() {
-  const { features, setFeatures } = useApp();
+  const { appState, appDispatch } = useApp();
 
   const handleCheckFeature = (feature: IFeature, checked: boolean) => {
     if (checked) {
-      setFeatures((prevFeatures) => [...prevFeatures, feature]);
+      appDispatch({
+        type: "ADD_FEATURE",
+        featureId: feature.id,
+      });
     } else {
-      setFeatures((prevFeatures) => prevFeatures.filter((f) => f !== feature));
+      appDispatch({
+        type: "REMOVE_FEATURE",
+        featureID: feature.id,
+      });
     }
   };
 
@@ -43,7 +48,7 @@ export default function Settings() {
               <li key={feature.id} className="flex items-center gap-2">
                 <Checkbox
                   id={feature.id}
-                  checked={features.includes(feature)}
+                  checked={appState.features.includes(feature)}
                   onCheckedChange={(checked) =>
                     handleCheckFeature(feature, checked as boolean)
                   }

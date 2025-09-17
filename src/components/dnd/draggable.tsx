@@ -22,15 +22,10 @@ export default function Draggable({ feature }: IDraggableProps) {
     e.dataTransfer?.setDragImage(img, 0, 0);
   };
 
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
   return (
     <div
       id={`draggable_${id}`}
       onDragStart={handleDragStart}
-      onDragEnter={handleDragEnter}
       draggable="true"
       className="border p-2"
     >

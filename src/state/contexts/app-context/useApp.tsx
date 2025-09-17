@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { AppContext } from "./app-context";
 
 export default function useApp() {
-  const { features, setFeatures } = useContext(AppContext);
+  const { state, dispatch } = useContext(AppContext);
 
-  return { features, setFeatures };
+  return { appState: state, appDispatch: dispatch };
 }

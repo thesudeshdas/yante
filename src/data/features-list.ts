@@ -8,11 +8,11 @@ export const FEATURES_LIST: IFeature[] = [
     minXCell: 2,
     minYCell: 2,
   },
-  // {
-  //   id: "id_pomodoro",
-  //   name: "Pomodoro Timer",
-  //   description: "A timer that helps you stay focused",
-  //   minXCell: 2,
-  //   minYCell: 2,
-  // },
+  {
+    id: "id_pomodoro",
+    name: "Pomodoro Timer",
+    description: "A timer that helps you stay focused",
+    minXCell: 4,
+    minYCell: 4,
+  },
 ];

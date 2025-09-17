@@ -10,8 +10,10 @@ export default function Dropzone() {
     e.preventDefault();
 
     e.dataTransfer.dropEffect = "move";
-
     console.log("drag over", { e });
+
+    const datas = e.dataTransfer.items;
+    console.log("data", { datas });
 
     const dropzoneEl = e.currentTarget as HTMLDivElement;
     if (!dropzoneEl) return;
@@ -50,7 +52,7 @@ export default function Dropzone() {
     e.preventDefault();
 
     const data = e.dataTransfer.getData("text/plain");
-    console.log({ dt: e.dataTransfer, data });
+    console.log("drop", { e });
 
     const draggedElement = document.getElementById(data);
     if (!draggedElement) return;
