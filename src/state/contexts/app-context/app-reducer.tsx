@@ -6,6 +6,12 @@ export default function appReducer(
   action: IAppAction
 ): IAppState {
   switch (action.type) {
+    case "SET_ENABLED_FEATURES":
+      return {
+        ...state,
+        enabledFeatures: action.enabledFeatures,
+      };
+
     case "ADD_FEATURE":
       const featureToAdd = FEATURES_LIST.find((f) => f.id === action.featureId);
       if (!featureToAdd) return state;
@@ -38,6 +44,7 @@ export default function appReducer(
             : f
         ),
       };
+
     default:
       return state;
   }

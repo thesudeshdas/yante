@@ -111,7 +111,6 @@ export default function Dropzone() {
     dropzoneEl.appendChild(clonedDraggedElement as HTMLElement);
 
     // set the position of the dragged element
-
     if (xToBeSet && yToBeSet) {
       appDispatch({
         type: "SET_POSITION",

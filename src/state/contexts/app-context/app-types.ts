@@ -26,6 +26,7 @@ export interface IEnabledFeature extends IFeature {
 }
 
 export type IAppAction =
+  | { type: "SET_ENABLED_FEATURES"; enabledFeatures: IEnabledFeature[] }
   | { type: "ADD_FEATURE"; featureId: string }
   | { type: "REMOVE_FEATURE"; featureID: string }
   | { type: "SET_DRAGGED_ITEM"; itemId: string }
