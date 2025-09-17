@@ -34,4 +34,5 @@ export type IAppAction =
       type: "SET_POSITION";
       itemId: string;
       position: { x: number; y: number };
-    };
+    }
+  | { type: "REMOVE_FEATURE_FROM_CANVAS"; featureID: string };

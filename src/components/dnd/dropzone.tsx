@@ -2,6 +2,7 @@ import { getNearestCell } from "@/lib/utils/coordinates";
 import { pixellate, setCSS } from "@/lib/utils/css";
 import useApp from "@/state/contexts/app-context/useApp";
 import { useState } from "react";
+import Draggable from "./draggable";
 
 export default function Dropzone() {
   const { appState, appDispatch } = useApp();
@@ -13,6 +14,36 @@ export default function Dropzone() {
 
   const [xToBeSet, setXToBeSet] = useState<number | null>(null);
   const [yToBeSet, setYToBeSet] = useState<number | null>(null);
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    console.log("drag enter", { e });
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+
+    console.log("drag leave", { e });
+
+    // Determine if the mouse pointer has left dropzone boundaries during drag
+    const dropzoneEl = e.currentTarget as HTMLDivElement;
+    const rect = dropzoneEl.getBoundingClientRect();
+    const { clientX, clientY } = e;
+
+    const isOutside =
+      clientX < rect.left ||
+      clientX > rect.right ||
+      clientY < rect.top ||
+      clientY > rect.bottom;
+
+    if (!isOutside) return;
+
+    const previewEl = document.getElementById("preview-element");
+    if (previewEl) {
+      previewEl.remove();
+    }
+  };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -120,35 +151,9 @@ export default function Dropzone() {
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    console.log("drag enter", { e });
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-
-    console.log("drag leave", { e });
-
-    // Determine if the mouse pointer has left dropzone boundaries during drag
-    const dropzoneEl = e.currentTarget as HTMLDivElement;
-    const rect = dropzoneEl.getBoundingClientRect();
-    const { clientX, clientY } = e;
-
-    const isOutside =
-      clientX < rect.left ||
-      clientX > rect.right ||
-      clientY < rect.top ||
-      clientY > rect.bottom;
-
-    if (!isOutside) return;
-
-    const previewEl = document.getElementById("preview-element");
-    if (previewEl) {
-      previewEl.remove();
-    }
-  };
+  const enabledFeaturesToRender = appState.enabledFeatures.filter(
+    (feature) => feature.onCanvas
+  );
 
   return (
     <div
@@ -158,6 +163,10 @@ export default function Dropzone() {
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       className="w-[600px] h-[600px] border relative"
-    ></div>
+    >
+      {enabledFeaturesToRender.map((feature) => (
+        <Draggable key={feature.id} feature={feature} onCanvas />
+      ))}
+    </div>
   );
 }

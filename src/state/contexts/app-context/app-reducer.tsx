@@ -45,6 +45,14 @@ export default function appReducer(
         ),
       };
 
+    case "REMOVE_FEATURE_FROM_CANVAS":
+      return {
+        ...state,
+        enabledFeatures: state.enabledFeatures.map((f) =>
+          f.id === action.featureID ? { ...f, onCanvas: false } : f
+        ),
+      };
+
     default:
       return state;
   }

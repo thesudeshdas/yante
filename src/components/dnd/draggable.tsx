@@ -1,12 +1,23 @@
-import { IFeature } from "@/state/contexts/app-context/app-types";
+import { pixellate } from "@/lib/utils/css";
+import { cn } from "@/lib/utils/tailwind";
+import {
+  IEnabledFeature,
+  IFeature,
+} from "@/state/contexts/app-context/app-types";
 import useApp from "@/state/contexts/app-context/useApp";
+import { Button } from "../ui/button";
+import { XIcon } from "lucide-react";
 
-interface IDraggableProps {
-  feature: IFeature;
-}
+type IDraggableProps<T extends boolean = false> = {
+  feature: T extends true ? IEnabledFeature : IFeature;
+  onCanvas?: T;
+};
 
-export default function Draggable({ feature }: IDraggableProps) {
-  const { appDispatch } = useApp();
+export default function Draggable<T extends boolean = false>({
+  feature,
+  onCanvas = false as T,
+}: IDraggableProps<T>) {
+  const { appState, appDispatch } = useApp();
 
   const { id, name, minXCell, minYCell } = feature;
 
@@ -28,13 +39,43 @@ export default function Draggable({ feature }: IDraggableProps) {
     e.dataTransfer?.setDragImage(img, 0, 0);
   };
 
+  const handleRemove = () => {
+    appDispatch({ type: "REMOVE_FEATURE_FROM_CANVAS", featureID: feature.id });
+  };
+
+  console.log({ feature });
+
   return (
     <div
       id={`draggable_${id}`}
       onDragStart={handleDragStart}
       draggable="true"
-      className="border p-2"
+      className={cn("border p-2 group", onCanvas && `bg-red-500 absolute`)}
+      style={
+        onCanvas
+          ? {
+              width: pixellate(
+                (appState.canvas.width / 12) *
+                  (feature as IEnabledFeature).minXCell
+              ),
+              height: pixellate(
+                (appState.canvas.height / 12) *
+                  (feature as IEnabledFeature).minYCell
+              ),
+              left: pixellate((feature as IEnabledFeature)?.position?.x ?? 0),
+              top: pixellate((feature as IEnabledFeature)?.position?.y ?? 0),
+            }
+          : {}
+      }
     >
+      <Button
+        variant="default"
+        size="icon"
+        className="absolute top-0 right-0 hidden group-hover:flex cursor-pointer"
+        onClick={handleRemove}
+      >
+        <XIcon />
+      </Button>
       {name} ({minXCell}x{minYCell})
     </div>
   );
