@@ -1,4 +1,3 @@
-import { pixellate } from "@/lib/utils/css";
 import { cn } from "@/lib/utils/tailwind";
 import {
   IEnabledFeature,
@@ -7,6 +6,7 @@ import {
 import useApp from "@/state/contexts/app-context/useApp";
 import { Button } from "../ui/button";
 import { XIcon } from "lucide-react";
+import { getCanvasPosition } from "@/lib/utils/coordinates";
 
 type IDraggableProps<T extends boolean = false> = {
   feature: T extends true ? IEnabledFeature : IFeature;
@@ -20,6 +20,8 @@ export default function Draggable<T extends boolean = false>({
   scale = 1,
 }: IDraggableProps<T>) {
   const { appState, appDispatch } = useApp();
+
+  const { width: canvasWidth, height: canvasHeight } = appState.canvas;
 
   const { id, name, minXCell, minYCell } = feature;
 
@@ -55,24 +57,14 @@ export default function Draggable<T extends boolean = false>({
       className={cn("border p-2 group", onCanvas && `bg-red-500 absolute`)}
       style={
         onCanvas
-          ? {
-              width: pixellate(
-                (appState.canvas.width / 12) *
-                  (feature as IEnabledFeature).minXCell *
-                  scale
-              ),
-              height: pixellate(
-                (appState.canvas.height / 12) *
-                  (feature as IEnabledFeature).minYCell *
-                  scale
-              ),
-              left: pixellate(
-                ((feature as IEnabledFeature)?.position?.x ?? 0) * scale
-              ),
-              top: pixellate(
-                ((feature as IEnabledFeature)?.position?.y ?? 0) * scale
-              ),
-            }
+          ? getCanvasPosition(
+              canvasWidth,
+              canvasHeight,
+              minXCell,
+              minYCell,
+              (feature as IEnabledFeature).position ?? { x: 0, y: 0 },
+              scale
+            )
           : {}
       }
     >
