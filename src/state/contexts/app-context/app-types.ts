@@ -1,3 +1,5 @@
+import { FEATURES_LIST } from "@/data/features-list";
+
 export interface IAppState {
   features: IFeature[];
   enabledFeatures: IEnabledFeature[];
@@ -35,4 +37,13 @@ export type IAppAction =
       itemId: string;
       position: { x: number; y: number };
     }
-  | { type: "REMOVE_FEATURE_FROM_CANVAS"; featureID: string };
+  | { type: "REMOVE_FEATURE_FROM_CANVAS"; featureID: string }
+  | {
+      type: "SET_CANVAS_DIMENSIONS";
+      dimensions: { width: number; height: number };
+    };
+
+export interface IWidget {
+  id: string;
+  component: React.ComponentType;
+}

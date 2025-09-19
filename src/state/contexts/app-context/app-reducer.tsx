@@ -53,6 +53,15 @@ export default function appReducer(
         ),
       };
 
+    case "SET_CANVAS_DIMENSIONS":
+      return {
+        ...state,
+        canvas: {
+          ...state.canvas,
+          ...action.dimensions,
+        },
+      };
+
     default:
       return state;
   }

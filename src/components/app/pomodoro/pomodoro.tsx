@@ -65,7 +65,7 @@ export default function Pomodoro({ cycleMinutes = 5 }: IPomodoroProps) {
   }, [isRunning, timeLeft]);
 
   return (
-    <section className="relative flex flex-col items-center justify-center aspect-square w-[600px] h-[600px]">
+    <section className="relative flex flex-col items-center justify-center aspect-square w-full h-full">
       <svg
         className="absolute inset-0 w-full h-full -rotate-90"
         viewBox="0 0 600 600"
@@ -98,7 +98,7 @@ export default function Pomodoro({ cycleMinutes = 5 }: IPomodoroProps) {
 
       {/* Countdown display */}
       <div className="flex flex-col items-center justify-center z-10">
-        <div className="text-6xl font-mono font-bold text-white mb-8">
+        <div className="text-4xl font-mono font-bold text-white mb-8">
           {formatTime(timeLeft)}
         </div>
 

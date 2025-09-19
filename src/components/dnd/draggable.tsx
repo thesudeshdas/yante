@@ -11,11 +11,13 @@ import { XIcon } from "lucide-react";
 type IDraggableProps<T extends boolean = false> = {
   feature: T extends true ? IEnabledFeature : IFeature;
   onCanvas?: T;
+  scale?: number;
 };
 
 export default function Draggable<T extends boolean = false>({
   feature,
   onCanvas = false as T,
+  scale = 1,
 }: IDraggableProps<T>) {
   const { appState, appDispatch } = useApp();
 
@@ -56,14 +58,20 @@ export default function Draggable<T extends boolean = false>({
           ? {
               width: pixellate(
                 (appState.canvas.width / 12) *
-                  (feature as IEnabledFeature).minXCell
+                  (feature as IEnabledFeature).minXCell *
+                  scale
               ),
               height: pixellate(
                 (appState.canvas.height / 12) *
-                  (feature as IEnabledFeature).minYCell
+                  (feature as IEnabledFeature).minYCell *
+                  scale
               ),
-              left: pixellate((feature as IEnabledFeature)?.position?.x ?? 0),
-              top: pixellate((feature as IEnabledFeature)?.position?.y ?? 0),
+              left: pixellate(
+                ((feature as IEnabledFeature)?.position?.x ?? 0) * scale
+              ),
+              top: pixellate(
+                ((feature as IEnabledFeature)?.position?.y ?? 0) * scale
+              ),
             }
           : {}
       }

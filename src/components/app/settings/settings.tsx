@@ -31,7 +31,7 @@ export default function Settings() {
   console.log({ appState });
 
   return (
-    <Sheet open>
+    <Sheet>
       <SheetTrigger>
         <SettingsIcon className="size-8 cursor-pointer hover:bg-foreground/10" />
       </SheetTrigger>

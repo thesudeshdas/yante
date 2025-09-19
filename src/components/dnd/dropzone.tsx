@@ -4,13 +4,22 @@ import useApp from "@/state/contexts/app-context/useApp";
 import { useState } from "react";
 import Draggable from "./draggable";
 
-export default function Dropzone() {
+interface IDropzoneProps {
+  maxWidth?: number;
+}
+
+export default function Dropzone({ maxWidth }: IDropzoneProps) {
   const { appState, appDispatch } = useApp();
 
   const { width, height } = appState.canvas;
 
-  const canvasWidth = pixellate(width);
-  const canvasHeight = pixellate(height);
+  // Calculate scale factor if maxWidth is provided
+  const scale = maxWidth && width > maxWidth ? maxWidth / width : 1;
+  const scaledWidth = width * scale;
+  const scaledHeight = height * scale;
+
+  const canvasWidth = pixellate(scaledWidth);
+  const canvasHeight = pixellate(scaledHeight);
 
   const [xToBeSet, setXToBeSet] = useState<number | null>(null);
   const [yToBeSet, setYToBeSet] = useState<number | null>(null);
@@ -122,31 +131,15 @@ export default function Dropzone() {
     );
     if (!draggedItem) return;
 
-    // get the dragged element
-    const data = e.dataTransfer.getData("text/plain");
-    const draggedElement = document.getElementById(data);
-    if (!draggedElement) return;
-
-    // clone the dragged element & add styling
-    const clonedDraggedElement = draggedElement.cloneNode(true) as HTMLElement;
-    clonedDraggedElement.classList.add("absolute");
-
-    setCSS(clonedDraggedElement, {
-      width: `calc((${canvasWidth}/12)*${draggedItem.minXCell})`,
-      height: `calc((${canvasHeight}/12)*${draggedItem.minYCell})`,
-      left: pixellate(xToBeSet ?? 0),
-      top: pixellate(yToBeSet ?? 0),
-    });
-
-    // append the cloned element to the dropzone
-    dropzoneEl.appendChild(clonedDraggedElement as HTMLElement);
-
     // set the position of the dragged element
-    if (xToBeSet && yToBeSet) {
+    if (xToBeSet !== null && yToBeSet !== null) {
       appDispatch({
         type: "SET_POSITION",
         itemId: draggedItem.id,
-        position: { x: xToBeSet, y: yToBeSet },
+        position: {
+          x: Math.round(xToBeSet / scale),
+          y: Math.round(yToBeSet / scale),
+        },
       });
     }
   };
@@ -162,10 +155,17 @@ export default function Dropzone() {
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="w-[600px] h-[600px] border relative"
+      className="border relative"
+      style={{
+        width: canvasWidth,
+        height: canvasHeight,
+        backgroundImage:
+          `repeating-linear-gradient(to right, hsl(0 0% 50% / 0.2) 0 1px, transparent 1px calc((${canvasWidth})/12)), ` +
+          `repeating-linear-gradient(to bottom, hsl(0 0% 50% / 0.2) 0 1px, transparent 1px calc((${canvasHeight})/12))`,
+      }}
     >
       {enabledFeaturesToRender.map((feature) => (
-        <Draggable key={feature.id} feature={feature} onCanvas />
+        <Draggable key={feature.id} feature={feature} onCanvas scale={scale} />
       ))}
     </div>
   );

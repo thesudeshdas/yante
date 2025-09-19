@@ -1,3 +1,4 @@
+import Clock from "@/components/app/clock/clock";
 import { IFeature } from "@/state/contexts/app-context/app-types";
 
 export const FEATURES_LIST: IFeature[] = [

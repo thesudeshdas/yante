@@ -9,11 +9,14 @@ export const getNearestCell = (
   const relX = mouseX - dropzoneRect.left;
   const relY = mouseY - dropzoneRect.top;
 
-  const nearestXCell = Math.round(relX / (600 / 12)) * 50;
-  const nearestYCell = Math.round(relY / (600 / 12)) * 50;
+  const cellWidth = dropzoneRect.width / 12;
+  const cellHeight = dropzoneRect.height / 12;
+
+  const snappedX = Math.round(relX / cellWidth) * cellWidth;
+  const snappedY = Math.round(relY / cellHeight) * cellHeight;
 
   return {
-    x: Math.round(nearestXCell / (600 / 12)) * 50,
-    y: Math.round(nearestYCell / (600 / 12)) * 50,
+    x: Math.round(snappedX),
+    y: Math.round(snappedY),
   };
 };

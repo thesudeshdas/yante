@@ -15,7 +15,7 @@ export default function Dnd() {
         ))}
       </div>
 
-      <Dropzone />
+      <Dropzone maxWidth={800} />
     </section>
   );
 }
