@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Roadmap
+    url: https://github.com/users/thesudeshdas/projects/7
+    about: Review planned work and status before filing a new issue.
+  - name: Email
+    url: mailto:sudeshkumardas7@gmail.com
+    about: Reach out directly for sensitive reports or questions.

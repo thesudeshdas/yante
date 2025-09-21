@@ -1,0 +1,95 @@
+name: Documentation request
+description: Request new docs or improvements to existing documentation
+title: "[Docs]: "
+labels:
+  - docs
+  - needs-triage
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve the docs. Be specific so we can make targeted updates.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short summary
+      description: One-sentence description of the documentation need.
+      placeholder: "Document widget layout system and drag/drop zones"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: doc_type
+    attributes:
+      label: Documentation type
+      options:
+        - README / Getting Started
+        - User Guide
+        - Feature Guide (Pomodoro, Clock, etc.)
+        - API / Developer Guide
+        - Architecture / Design
+        - ADR (Architecture Decision Record)
+        - Changelog / Release Notes
+        - Contribution Guide
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: location
+    attributes:
+      label: Location / file or URL
+      placeholder: "README.md, docs/architecture.md, Notion link, etc."
+    validations:
+      required: false
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior / content
+      description: What exists today? Include excerpts if helpful.
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: What should be added, clarified, or restructured?
+    validations:
+      required: true
+
+  - type: textarea
+    id: audience
+    attributes:
+      label: Intended audience
+      placeholder: "End users, contributors, maintainers, designers, etc."
+    validations:
+      required: false
+
+  - type: textarea
+    id: examples
+    attributes:
+      label: Examples / references
+      description: Screenshots, snippets, links to similar docs you like.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I searched existing docs and issues
+          required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      placeholder: Constraints, timelines, related work.
+    validations:
+      required: false
