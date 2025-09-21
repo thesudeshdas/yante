@@ -10,9 +10,25 @@ import {
 import { IFeature } from "@/state/contexts/app-context/app-types";
 import useApp from "@/state/contexts/app-context/useApp";
 import { SettingsIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  clearWallpaper,
+  fileToDataUrl,
+  saveWallpaperDataUrl,
+} from "@/lib/utils/wallpaper";
 
 export default function Settings() {
   const { appState, appDispatch } = useApp();
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const dataUrl = await fileToDataUrl(file);
+    await saveWallpaperDataUrl(dataUrl);
+  };
+
+  const handleRemove = async () => {
+    await clearWallpaper();
+  };
 
   const handleCheckFeature = (feature: IFeature, checked: boolean) => {
     if (checked) {
@@ -64,6 +80,26 @@ export default function Settings() {
           </ul>
 
           <Dnd />
+
+          <div className="mt-8 space-y-3">
+            <h3 className="text-md font-semibold">Wallpaper</h3>
+            <div className="flex items-center gap-3">
+              <Button asChild variant="outline" size="sm">
+                <label className="cursor-pointer">
+                  Upload Image
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleUpload}
+                  />
+                </label>
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleRemove}>
+                Remove
+              </Button>
+            </div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
