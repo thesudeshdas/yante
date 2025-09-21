@@ -35,7 +35,7 @@ body:
     id: expected
     attributes:
       label: expected behavior
-      placeholder: | "Pomodoro continues running in the background."
+      placeholder: "Pomodoro continues running in the background."
 
   - type: textarea
     id: actual
