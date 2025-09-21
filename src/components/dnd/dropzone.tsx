@@ -1,8 +1,9 @@
 import { getNearestCell } from "@/lib/utils/coordinates";
 import { pixellate, setCSS } from "@/lib/utils/css";
 import useApp from "@/state/contexts/app-context/useApp";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Draggable from "./draggable";
+import { FIXED_CELL_SIZE } from "@/data/app-constants";
 
 interface IDropzoneProps {
   maxWidth?: number;
@@ -10,34 +11,41 @@ interface IDropzoneProps {
 
 export default function Dropzone({ maxWidth }: IDropzoneProps) {
   const { appState, appDispatch } = useApp();
+  const gridRef = useRef<HTMLDivElement>(null);
 
-  const { width, height } = appState.canvas;
+  const {
+    width: canvasWidth,
+    height: canvasHeight,
+    columns: canvasCols,
+    rows: canvasRows,
+  } = appState.canvas;
 
   // Calculate scale factor if maxWidth is provided
-  const scale = maxWidth && width > maxWidth ? maxWidth / width : 1;
-  const scaledWidth = width * scale;
-  const scaledHeight = height * scale;
+  const scale = maxWidth && canvasWidth > maxWidth ? maxWidth / canvasWidth : 1;
+  const scaledWidth = canvasWidth * scale;
+  const scaledHeight = canvasHeight * scale;
 
-  const canvasWidth = pixellate(scaledWidth);
-  const canvasHeight = pixellate(scaledHeight);
+  const cellSizeForCols = scaledWidth / canvasCols;
+  const cellSizeForRows = scaledHeight / canvasRows;
+  const cellSize = Math.min(cellSizeForCols, cellSizeForRows);
+  const contentWidth = canvasCols * cellSize;
+  const contentHeight = canvasRows * cellSize;
+  const convScale = cellSize / FIXED_CELL_SIZE;
 
   const [xToBeSet, setXToBeSet] = useState<number | null>(null);
   const [yToBeSet, setYToBeSet] = useState<number | null>(null);
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-
-    console.log("drag enter", { e });
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
 
-    console.log("drag leave", { e });
-
     // Determine if the mouse pointer has left dropzone boundaries during drag
-    const dropzoneEl = e.currentTarget as HTMLDivElement;
-    const rect = dropzoneEl.getBoundingClientRect();
+    const gridEl = gridRef.current;
+    if (!gridEl) return;
+    const rect = gridEl.getBoundingClientRect();
     const { clientX, clientY } = e;
 
     const isOutside =
@@ -61,8 +69,8 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
     e.dataTransfer.dropEffect = "move";
 
     // check for dropzone element, return if not found
-    const dropzoneEl = e.currentTarget as HTMLDivElement;
-    if (!dropzoneEl) return;
+    const gridEl = gridRef.current;
+    if (!gridEl) return;
 
     // get the dragged item
     const draggedItem = appState.enabledFeatures.find(
@@ -80,25 +88,37 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
 
       // Use inline styles instead of dynamic Tailwind classes
       setCSS(newPreviewEl, {
-        height: `calc((${canvasHeight}/12)*${draggedItem.minYCell})`,
-        width: `calc((${canvasWidth}/12)*${draggedItem.minXCell})`,
+        height: pixellate(cellSize * draggedItem.minYCell),
+        width: pixellate(cellSize * draggedItem.minXCell),
       });
 
-      console.log({ canvasHeight, canvasWidth, draggedItem });
-
-      const { x, y } = getNearestCell(dropzoneEl, e.clientX, e.clientY, 0, 0);
+      const { x, y } = getNearestCell(
+        gridEl,
+        e.clientX,
+        e.clientY,
+        0,
+        0,
+        canvasCols
+      );
 
       setCSS(newPreviewEl, {
         left: pixellate(x),
         top: pixellate(y),
       });
 
-      dropzoneEl.appendChild(newPreviewEl as HTMLElement);
+      gridEl.appendChild(newPreviewEl as HTMLElement);
     }
 
     // if preview element exists, update the position
     if (previewEl) {
-      const { x, y } = getNearestCell(dropzoneEl, e.clientX, e.clientY, 0, 0);
+      const { x, y } = getNearestCell(
+        gridEl,
+        e.clientX,
+        e.clientY,
+        0,
+        0,
+        canvasCols
+      );
 
       // update the position of the preview element
       setCSS(previewEl, {
@@ -116,8 +136,8 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
     e.preventDefault();
 
     // check for dropzone element, return if not found
-    const dropzoneEl = e.currentTarget as HTMLDivElement;
-    if (!dropzoneEl) return;
+    const gridEl = gridRef.current;
+    if (!gridEl) return;
 
     // check for preview element and remove it if it exists
     const previewEl = document.getElementById("preview-element");
@@ -137,8 +157,8 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
         type: "SET_POSITION",
         itemId: draggedItem.id,
         position: {
-          x: Math.round(xToBeSet / scale),
-          y: Math.round(yToBeSet / scale),
+          x: Math.round(xToBeSet / convScale),
+          y: Math.round(yToBeSet / convScale),
         },
       });
     }
@@ -155,18 +175,35 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="border relative"
-      style={{
-        width: canvasWidth,
-        height: canvasHeight,
-        backgroundImage:
-          `repeating-linear-gradient(to right, hsl(0 0% 50% / 0.2) 0 1px, transparent 1px calc((${canvasWidth})/12)), ` +
-          `repeating-linear-gradient(to bottom, hsl(0 0% 50% / 0.2) 0 1px, transparent 1px calc((${canvasHeight})/12))`,
-      }}
+      className="overflow-hidden flex items-center justify-center"
+      style={{ width: pixellate(scaledWidth), height: pixellate(scaledHeight) }}
     >
-      {enabledFeaturesToRender.map((feature) => (
-        <Draggable key={feature.id} feature={feature} onCanvas scale={scale} />
-      ))}
+      <div
+        ref={gridRef}
+        className="relative w-full border border-red-500"
+        style={{
+          width: pixellate(contentWidth),
+          height: pixellate(contentHeight),
+          backgroundImage:
+            `repeating-linear-gradient(to right, hsl(0 0% 50% / 0.2) 0 1px, transparent 1px ${pixellate(
+              cellSize
+            )}), ` +
+            `repeating-linear-gradient(to bottom, hsl(0 0% 50% / 0.2) 0 1px, transparent 1px ${pixellate(
+              cellSize
+            )})`,
+        }}
+      >
+        {enabledFeaturesToRender.map((feature) => (
+          <Draggable
+            key={feature.id}
+            feature={feature}
+            onCanvas
+            scale={convScale}
+            gridBaseWidth={canvasCols * FIXED_CELL_SIZE}
+            gridColumns={canvasCols}
+          />
+        ))}
+      </div>
     </div>
   );
 }

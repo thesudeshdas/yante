@@ -7,6 +7,8 @@ export interface IAppState {
   canvas: {
     width: number;
     height: number;
+    columns: number;
+    rows: number;
   };
 }
 
@@ -40,7 +42,12 @@ export type IAppAction =
   | { type: "REMOVE_FEATURE_FROM_CANVAS"; featureID: string }
   | {
       type: "SET_CANVAS_DIMENSIONS";
-      dimensions: { width: number; height: number };
+      dimensions: {
+        width: number;
+        height: number;
+        columns: number;
+        rows: number;
+      };
     };
 
 export interface IWidget {

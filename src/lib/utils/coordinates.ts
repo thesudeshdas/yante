@@ -5,17 +5,18 @@ export const getNearestCell = (
   mouseX: number,
   mouseY: number,
   x: number,
-  y: number
+  y: number,
+  columns: number
 ): { x: number; y: number } => {
   const dropzoneRect = dropzone.getBoundingClientRect();
-  const relX = mouseX - dropzoneRect.left;
-  const relY = mouseY - dropzoneRect.top;
+  const relX = mouseX - dropzoneRect.left + dropzone.scrollLeft;
+  const relY = mouseY - dropzoneRect.top + dropzone.scrollTop;
 
-  const cellWidth = dropzoneRect.width / 12;
-  const cellHeight = dropzoneRect.height / 12;
+  const safeColumns = Math.max(1, Math.floor(columns));
+  const cellSize = dropzoneRect.width / safeColumns;
 
-  const snappedX = Math.round(relX / cellWidth) * cellWidth;
-  const snappedY = Math.round(relY / cellHeight) * cellHeight;
+  const snappedX = Math.round(relX / cellSize) * cellSize;
+  const snappedY = Math.round(relY / cellSize) * cellSize;
 
   return {
     x: Math.round(snappedX),
@@ -25,15 +26,18 @@ export const getNearestCell = (
 
 export const getCanvasPosition = (
   canvasWidth: number,
-  canvasHeight: number,
   minXCell: number,
   minYCell: number,
   position: { x: number; y: number },
-  scale: number
+  scale: number,
+  columns: number
 ): { width: string; height: string; left: string; top: string } => {
+  const safeColumns = Math.max(1, Math.floor(columns));
+  const cellSize = canvasWidth / safeColumns;
+
   return {
-    width: pixellate((canvasWidth / 12) * minXCell * scale),
-    height: pixellate((canvasHeight / 12) * minYCell * scale),
+    width: pixellate(cellSize * minXCell * scale),
+    height: pixellate(cellSize * minYCell * scale),
     left: pixellate(position.x * scale),
     top: pixellate(position.y * scale),
   };

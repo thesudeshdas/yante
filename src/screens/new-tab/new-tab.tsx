@@ -4,7 +4,7 @@ import TopBar from "@/components/app/top-bar/top-bar";
 
 export default function NewTab() {
   return (
-    <main className="h-screen w-screen flex flex-col">
+    <main className="h-screen w-screen flex flex-col overflow-hidden">
       <TopBar />
 
       <section className="flex flex-col items-center justify-center h-screen">

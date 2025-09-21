@@ -12,16 +12,21 @@ type IDraggableProps<T extends boolean = false> = {
   feature: T extends true ? IEnabledFeature : IFeature;
   onCanvas?: T;
   scale?: number;
+  gridBaseWidth?: number;
+  gridColumns?: number;
 };
 
 export default function Draggable<T extends boolean = false>({
   feature,
   onCanvas = false as T,
   scale = 1,
+  gridBaseWidth,
+  gridColumns,
 }: IDraggableProps<T>) {
   const { appState, appDispatch } = useApp();
 
-  const { width: canvasWidth, height: canvasHeight } = appState.canvas;
+  const { width: canvasWidth } = appState.canvas;
+  const baseWidth = gridBaseWidth ?? canvasWidth;
 
   const { id, name, minXCell, minYCell } = feature;
 
@@ -47,8 +52,6 @@ export default function Draggable<T extends boolean = false>({
     appDispatch({ type: "REMOVE_FEATURE_FROM_CANVAS", featureID: feature.id });
   };
 
-  console.log({ feature });
-
   return (
     <div
       id={`draggable_${id}`}
@@ -58,12 +61,12 @@ export default function Draggable<T extends boolean = false>({
       style={
         onCanvas
           ? getCanvasPosition(
-              canvasWidth,
-              canvasHeight,
+              baseWidth,
               minXCell,
               minYCell,
               (feature as IEnabledFeature).position ?? { x: 0, y: 0 },
-              scale
+              scale,
+              gridColumns ?? 0
             )
           : {}
       }
