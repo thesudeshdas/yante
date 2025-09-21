@@ -3,7 +3,7 @@ import { pixellate, setCSS } from "@/lib/utils/css";
 import useApp from "@/state/contexts/app-context/useApp";
 import { useRef, useState } from "react";
 import Draggable from "./draggable";
-import { FIXED_CELL_SIZE } from "@/data/app-constants";
+// Removed fixed constant usage; using app state's cell size
 
 interface IDropzoneProps {
   maxWidth?: number;
@@ -18,6 +18,7 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
     height: canvasHeight,
     columns: canvasCols,
     rows: canvasRows,
+    cellSize: appCellSize,
   } = appState.canvas;
 
   // Calculate scale factor if maxWidth is provided
@@ -30,7 +31,7 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
   const cellSize = Math.min(cellSizeForCols, cellSizeForRows);
   const contentWidth = canvasCols * cellSize;
   const contentHeight = canvasRows * cellSize;
-  const convScale = cellSize / FIXED_CELL_SIZE;
+  const convScale = cellSize / appCellSize;
 
   const [xToBeSet, setXToBeSet] = useState<number | null>(null);
   const [yToBeSet, setYToBeSet] = useState<number | null>(null);
@@ -199,7 +200,7 @@ export default function Dropzone({ maxWidth }: IDropzoneProps) {
             feature={feature}
             onCanvas
             scale={convScale}
-            gridBaseWidth={canvasCols * FIXED_CELL_SIZE}
+            gridBaseWidth={canvasCols * appCellSize}
             gridColumns={canvasCols}
           />
         ))}

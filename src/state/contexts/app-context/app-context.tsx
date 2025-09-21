@@ -19,6 +19,7 @@ const getInitialState = (): IAppState => ({
     height: 600,
     columns: 6,
     rows: 6,
+    cellSize: 75,
   },
 });
 
@@ -42,10 +43,14 @@ export default function AppProvider({
     const initializeFromStorage = async () => {
       try {
         const enabledFeatures = await getFromStorage("enabledFeatures");
+        const storedCellSize = await getFromStorage("cellSize");
         console.log({ enabledFeatures });
 
         if (enabledFeatures) {
           dispatch({ type: "SET_ENABLED_FEATURES", enabledFeatures });
+        }
+        if (storedCellSize && typeof storedCellSize === "number") {
+          dispatch({ type: "SET_CELL_SIZE", cellSize: storedCellSize });
         }
       } catch (error) {
         console.error("Failed to load from storage:", error);
@@ -61,6 +66,7 @@ export default function AppProvider({
   useEffect(() => {
     if (isInitialized) {
       saveToStorage("enabledFeatures", state.enabledFeatures);
+      saveToStorage("cellSize", state.canvas.cellSize);
     }
   }, [state.enabledFeatures, isInitialized]);
 

@@ -62,6 +62,15 @@ export default function appReducer(
         },
       };
 
+    case "SET_CELL_SIZE":
+      return {
+        ...state,
+        canvas: {
+          ...state.canvas,
+          cellSize: action.cellSize,
+        },
+      };
+
     default:
       return state;
   }

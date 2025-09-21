@@ -9,6 +9,7 @@ export interface IAppState {
     height: number;
     columns: number;
     rows: number;
+    cellSize: number;
   };
 }
 
@@ -48,7 +49,8 @@ export type IAppAction =
         columns: number;
         rows: number;
       };
-    };
+    }
+  | { type: "SET_CELL_SIZE"; cellSize: number };
 
 export interface IWidget {
   id: string;

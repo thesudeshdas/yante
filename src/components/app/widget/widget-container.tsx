@@ -2,7 +2,7 @@ import { WIDGET_LIST } from "@/data/widget-list";
 import { IEnabledFeature } from "@/state/contexts/app-context/app-types";
 import useApp from "@/state/contexts/app-context/useApp";
 import { getCanvasPosition } from "@/lib/utils/coordinates";
-import { FIXED_CELL_SIZE } from "@/data/app-constants";
+// Removed fixed constant usage; using app state's cell size
 
 interface IWidgetContainerProps {
   feature: IEnabledFeature;
@@ -10,7 +10,7 @@ interface IWidgetContainerProps {
 
 export default function WidgetContainer({ feature }: IWidgetContainerProps) {
   const { appState } = useApp();
-  const { width: canvasWidth } = appState.canvas;
+  const { width: canvasWidth, cellSize: appCellSize } = appState.canvas;
   const scale = 1; // canvas rendered at actual size; adapt if canvas scaling is introduced
 
   const Widget = WIDGET_LIST.find(
@@ -19,8 +19,8 @@ export default function WidgetContainer({ feature }: IWidgetContainerProps) {
 
   if (!Widget) return <div>Not found</div>;
 
-  const canvasCols = Math.max(1, Math.floor(canvasWidth / FIXED_CELL_SIZE));
-  const gridBaseWidth = canvasCols * FIXED_CELL_SIZE;
+  const canvasCols = Math.max(1, Math.floor(canvasWidth / appCellSize));
+  const gridBaseWidth = canvasCols * appCellSize;
 
   return (
     <div
